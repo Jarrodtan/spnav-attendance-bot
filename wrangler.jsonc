@@ -1,0 +1,13 @@
+{
+  "name": "spnav-bot",
+  "main": "src/index.js",
+  "workers_dev": true,
+  "preview_urls": true,
+  "compatibility_date": "2026-06-18",
+  "kv_namespaces": [
+    {
+      "id": "a83082c4be9243a0bf0ef35f2867ddba",
+      "binding": "ATTENDANCE_KV"
+    }
+  ]
+}
