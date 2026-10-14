@@ -6,9 +6,11 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "node test/bot.test.mjs && node test/sheet.test.mjs"
+    "test": "node test/bot.test.mjs && node test/sheet.test.mjs",
+    "guides": "node tools/md2docx.js docs/LEADER_GUIDE.md \"guides-for-google-docs/SP Navigators Bot - Leader Guide.docx\" \"SP Navigators Bot — Leader Guide\" && node tools/md2docx.js docs/ADMIN_GUIDE.md \"guides-for-google-docs/SP Navigators Bot - Admin Guide.docx\" \"SP Navigators Bot — Admin Guide\""
   },
   "devDependencies": {
+    "docx": "^9.5.1",
     "wrangler": "^4.125.0"
   }
 }

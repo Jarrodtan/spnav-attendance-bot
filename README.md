@@ -25,6 +25,8 @@ The whole bot lives in a single message that updates as you tap buttons.
 | Privacy policy | [docs/PRIVACY.md](docs/PRIVACY.md) |
 | What changed | [CHANGELOG.md](CHANGELOG.md) |
 
+Word copies of the Leader and Admin guides (to upload as Google Docs) are in [guides-for-google-docs/](guides-for-google-docs/). Rebuild them after editing the guides with `npm run guides`.
+
 ## Project layout
 
 ```
@@ -33,6 +35,8 @@ src/archive/        Older versions, not deployed
 apps-script/        Google Apps Script for the member sheet
 test/               Simulated tests (npm test)
 docs/               Guides
+guides-for-google-docs/  Word copies of the guides for Google Docs
+tools/              md2docx.js (builds those Word copies)
 wrangler.jsonc      Cloudflare config
 ```
 
@@ -41,6 +45,7 @@ wrangler.jsonc      Cloudflare config
 ```bash
 npm install          # first time only
 npm test             # run the simulated tests
+npm run guides       # rebuild the Word/Google Docs guides
 npx wrangler deploy  # deploy the bot
 npx wrangler tail    # watch live logs
 ```
