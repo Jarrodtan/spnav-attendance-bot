@@ -127,6 +127,7 @@ src/index.js
         │   └── del_*         — delete non-telegram member
         └── message handler
             ├── Text input handler (invite_code, name, passwords etc.)
+            ├── Stray text (no input_pending) → deleted, nothing else happens
             └── /start command
 ```
 

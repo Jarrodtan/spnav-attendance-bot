@@ -20,10 +20,11 @@ const KV = {
 };
 const env = { ATTENDANCE_KV: KV, BOT_TOKEN: "T", ADMIN_USER_ID: "1", ADMIN_PASSWORD: "ap", LEADER_PASSWORD: "lp", INVITE_CODE: "inv" };
 
-let last = null, msgId = 100;
+let last = null, msgId = 100, deleted = [];
 globalThis.fetch = async (url, opts) => {
   const body = opts && opts.body ? JSON.parse(opts.body) : {};
   if (url.includes("sendMessage") || url.includes("editMessageText")) last = body;
+  if (url.includes("deleteMessage")) deleted.push(body.message_id);
   if (body.reply_markup) for (const row of body.reply_markup.inline_keyboard) for (const b of row)
     if (Buffer.byteLength(b.callback_data) > 64) throw new Error("callback too long: " + b.callback_data);
   return { json: async () => ({ ok: true, result: { message_id: ++msgId } }) };
@@ -106,4 +107,9 @@ await tap(1, "remove_member_2"); check(!store.has("name_2") && !store.has(`rsvp_
 
 // Old buttons gone
 await tap(1, "screen_home"); check(!buttons().some(b => /week_mode|action_clear|autodate|event_settings/.test(b)), "week mode / auto date / clear gone");
+// Stray text is deleted and changes nothing
+const before = JSON.stringify([...store]); deleted = [];
+await say(2, "hello bot");
+check(deleted.includes(9) && JSON.stringify([...store]) === before, "random text deleted, no data changed");
+
 console.log(process.exitCode ? "SOME FAILED" : "ALL PASSED");

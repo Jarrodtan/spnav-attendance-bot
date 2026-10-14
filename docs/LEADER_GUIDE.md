@@ -138,6 +138,12 @@ Tap **👥 Manage Members** to add/remove members and mark attendance for member
 
 ---
 
+## If Members Type in the Chat
+
+Typing doesn't break anything — the bot deletes any message it didn't ask for. If a member's message "disappears", remind them to use the buttons.
+
+---
+
 ## Logout
 
 Tap **🚪 Logout** when done.

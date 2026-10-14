@@ -138,6 +138,7 @@ _October 2026_ — based on leader feedback. `simple_index.js` kept as the archi
 - One-tap ✅ / ❌ RSVP per event from the home screen
 - **🗓 Manage Events** (admin): add from presets (Weekly Nav+U, Prayer Walk, VTP) or custom name; per-event rename, date & time, cancel/reopen, clear RSVPs, delete
 - Date & time entered in one message
+- Random text typed when the bot isn't asking for anything is deleted automatically (chat stays at one message)
 - Optional **📍 Location** per event — asked when adding (with Skip), editable from the event screen, shown on home, list and WhatsApp
 - View List, WhatsApp summary and Mark Attendance work per event
 

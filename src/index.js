@@ -10,6 +10,7 @@
 //   - Main message gets EDITED when user taps buttons
 //   - Several events can be open at once; each shows on the home screen with its own RSVP
 //   - Typed text (invite codes, names, passwords) is removed from chat after reading
+//   - Text typed when the bot isn't asking for anything is deleted and ignored
 //
 // Cloudflare Environment Variables needed:
 //   BOT_TOKEN       — Telegram bot token
@@ -1468,7 +1469,8 @@ async function handleUpdate(update, env) {
             return; // ✅ Done — stop processing
         }
 
-        // Not waiting for any input — ignore non-command text
+        // Not waiting for any input — remove the stray message to keep chat clean
+        await deleteMessage(chatId, userMessageId, env.BOT_TOKEN);
         return;
     }
 

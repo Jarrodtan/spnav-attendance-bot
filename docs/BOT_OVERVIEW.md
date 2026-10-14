@@ -49,6 +49,8 @@ Chat stays clean — only 1 message forever
 
 > Exception: the creator also gets 🔔 new-member alerts; their menu is re-sent below each alert.
 
+**Typing:** Telegram can't hide the text box, so the bot keeps the chat clean itself — text is only read when the bot asks for it (invite code, name, password, event details) and is then removed. Anything else typed is deleted straight away and does nothing.
+
 ---
 
 ## Screens

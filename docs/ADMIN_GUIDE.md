@@ -162,6 +162,12 @@ Or from the terminal: `npx wrangler secret put ADMIN_PASSWORD` (applies immediat
 
 ---
 
+## Typing in the Chat
+
+Members can't be stopped from typing (Telegram doesn't allow bots to hide the text box), but it's harmless: the bot only reads text when it has asked for something, and deletes anything else straight away. If someone says their message "disappeared", that's why — tell them to use the buttons.
+
+---
+
 ## Emergency — Bot Not Responding
 
 1. Visit `https://spnav-bot.omnivorefan.workers.dev` — shows "running"?
