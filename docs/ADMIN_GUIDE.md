@@ -5,7 +5,7 @@
 
 ## Login as Admin
 
-1. Tap **🔐 Leader/Admin Login**
+1. Tap **👤 My Profile** → **🔐 Leader/Admin Login**
 2. Tap **🔐 Login as Admin**
 3. Type the admin password
 4. Home screen reloads with all admin buttons
@@ -17,28 +17,33 @@
 ## Admin Home Screen
 
 ```
-🙏 Welcome, Sarah!
+☀️ Good afternoon, Sarah!
 
-📅 Weekly Nav+U — Fri 17 Oct, 5:30pm
+📖 Weekly Nav+U — Fri 17 Oct, 5:30pm
 ✅ You're COMING
 
-📅 Prayer Walk — Sat 18 Oct, 9am
+🙏 Prayer Walk — Sat 18 Oct, 9am
 📍 SP Chapel
 ❓ Not RSVP'd yet
 
 Tap ✅ coming or ❌ not coming:
 
-[✅ Weekly Nav+U]   [❌ Weekly Nav+U]
+[👉 ✅ Weekly Nav+U] [❌ Weekly Nav+U]
 [✅ Prayer Walk]    [❌ Prayer Walk]
 [👤 My Profile]
 [📋 View List]       [📱 WhatsApp]
 [👥 Manage Members]
 [🗓 Manage Events]   [👥 Members]
+[🧩 Groups]          [🔑 Invite Code]
 [📊 Sync Sheet]
 [🚪 Logout]
 ```
 
 Every open event shows on the home screen with the member's status — no separate RSVP or status screen.
+👉 marks the option you already picked. Tap the other one any time to change your answer.
+
+Members don't see the login button on their home screen — it's inside **👤 My Profile** to keep things simple.
+
 
 ---
 
@@ -49,9 +54,10 @@ Tap **🗓 Manage Events** to see all events. Several can be open at the same ti
 ### Add an event
 1. Tap **➕ Add Event**
 2. Pick a regular event — **Weekly Nav+U**, **Prayer Walk**, **VTP** — or **✏️ Custom name** and type one
-3. Type the date & time in one message, e.g. `Fri 17 Oct, 5:30pm`
-4. Type the location, e.g. `SP Chapel` — or tap **⏭ Skip**
-5. Done — it appears on everyone's home screen straight away
+3. Choose who it's for — **Both teams**, **Restorer only** or **Hesed only**
+4. Type the date & time in one message, e.g. `Fri 17 Oct, 5:30pm`
+5. Type the location, e.g. `SP Chapel` — or tap **⏭ Skip**
+6. Done — it appears on everyone's home screen straight away
 
 ### Edit an event
 Tap the event in the list:
@@ -64,7 +70,7 @@ Status: ✅ Open for RSVP
 RSVPs: ✅ 12  ❌ 3
 
 [✏️ Rename]        [🕐 Date & Time]
-[📍 Location]
+[📍 Location]      [👥 Who's it for]
 [❌ Cancel Event]
 [🧹 Clear RSVPs]   [🗑️ Delete Event]
 [🔙 Back]
@@ -75,6 +81,8 @@ RSVPs: ✅ 12  ❌ 3
 | ✏️ Rename | Type a new name |
 | 🕐 Date & Time | Type the new date & time in one message |
 | 📍 Location | Type the location (type `-` to remove it) |
+| 👥 Who's it for | Both teams / Restorer only / Hesed only |
+| 📖 Change Emoji | Pick the event's emoji, or ↩️ Automatic (📖 Nav+U, 🙏 Prayer Walk, 🏕️ VTP, 📅 others) |
 | ❌ Cancel Event | Members see "Cancelled", RSVP buttons disappear (becomes ✅ Reopen Event) |
 | 🧹 Clear RSVPs | Reset RSVPs for this event only — reuse it for next week |
 | 🗑️ Delete Event | Remove the event and its RSVPs |
@@ -147,7 +155,18 @@ Tap after anything changed outside the bot (e.g. KV keys deleted in the Cloudfla
 
 ---
 
-## Changing Passwords / Invite Code
+## Invite Code
+
+Tap **🔑 Invite Code** to see the current code — send it to new members so they can register.
+
+To change it: **✏️ Change Code** → type the new code (one word, no spaces).
+- Works straight away; the old code stops working
+- Members who already registered aren't affected
+- The `INVITE_CODE` Cloudflare secret is only the starting code — once changed in the bot, the bot's code is used
+
+---
+
+## Changing Passwords
 
 Go to Cloudflare Dashboard → Workers → Settings → Variables:
 
@@ -155,7 +174,7 @@ Go to Cloudflare Dashboard → Workers → Settings → Variables:
 |---|---|
 | `ADMIN_PASSWORD` | Admin login password |
 | `LEADER_PASSWORD` | Leader login password |
-| `INVITE_CODE` | Member invite code |
+| `INVITE_CODE` | Starting invite code (change it in the bot instead — see Invite Code) |
 | `SHEET_SECRET` | Must match Apps Script's `SHEET_SECRET` |
 
 Or from the terminal: `npx wrangler secret put ADMIN_PASSWORD` (applies immediately, no deploy needed).
@@ -192,3 +211,57 @@ Run `npx wrangler tail` and look for `Apps Script rejected`:
 - `unauthorized` → `SHEET_SECRET` differs between Worker and Script Properties
 - `sheet not found` → `SHEET_NAME` in Code.gs doesn't match the tab name
 - no line at all → `APPS_SCRIPT_URL` not set
+
+---
+
+## Members Fixing Their Own Details
+
+Members can sort these out themselves in **👤 My Profile** — no leader needed:
+- **✏️ Update Name**
+- **👥 Change Group** — pick a ministry group, or **Not sure** for now and change it later
+
+The Google Sheet updates automatically when they change their group.
+
+---
+
+## Teams — Restorer (brothers) & Hesed (sisters)
+
+Both teams use the same bot.
+
+- **Registering:** after typing their name, members pick **Restorer** or **Hesed**, then their ministry group (skipped if the team has no groups)
+- **Members who joined before teams existed** are Restorer
+- **Leaders** only see and manage their own team (lists, WhatsApp, mark attendance, add/remove members). **Admins** see both.
+- Members can switch team in **👤 My Profile → 🔄 Change Team** (their group resets)
+
+### 🧩 Groups (admin)
+Each team has its own ministry group list. Tap **🧩 Groups** → pick the team:
+- **➕ Add Group** — e.g. `Group 1`
+- Tap a group to delete it (members already in it keep the name until they change)
+- Restorer starts with Refresher, Rescuer, Repairer, Rebuilder, Recharger. Hesed starts with none — sisters skip the group step until you add some.
+- "Not sure" is always offered so nobody has to guess
+
+### Who an event is for
+When adding an event you choose **Both teams**, **Restorer only** or **Hesed only**. Change it later with **👥 Who's it for** on the event. Members only see events for their team; events from before teams existed are for both.
+
+### Adding non-Telegram members
+Admins pick the team first; leaders add to their own team automatically.
+
+### 👥 Members
+Lists everyone by team with their group.
+
+---
+
+## Emojis at a Glance
+
+| Emoji | Meaning |
+|---|---|
+| 🌅 / ☀️ / 🌙 | Good morning / afternoon / evening (Singapore time) |
+| 📖 | Weekly Nav+U |
+| 🙏 | Prayer Walk |
+| 🏕️ | VTP |
+| 📅 | Other events (admins can pick a different one with **Change Emoji** on the event) |
+| ⛔ | Event cancelled |
+| ✅ / ❌ / ❓ | Coming / Not coming / Not answered yet |
+| 👉 | The answer you already picked |
+| 👨 / 👩 / 👥 | Restorer (brothers) / Hesed (sisters) / Both teams |
+| 🎉 🙌 😢 | Registered / RSVP'd coming / RSVP'd not coming |

@@ -6,9 +6,9 @@ Runs on **Cloudflare Workers** + **Workers KV**. Google Sheet updates go through
 
 ## What it does
 
-- **Members** — register with an invite code, then RSVP ✅/❌ to every upcoming event from one message
-- **Leaders** — view attendance per event, copy a WhatsApp summary, add/remove members, mark attendance for members without Telegram
-- **Admins** — add events (Nav+U, Prayer Walk, VTP or custom) with date, time and location; cancel, clear or delete events; sync the Google Sheet
+- **Members** — register with an invite code, pick their team (**Restorer** brothers / **Hesed** sisters), then RSVP ✅/❌ to every upcoming event from one message
+- **Leaders** — for their own team: view attendance per event, copy a WhatsApp summary (choice of formats or a custom template), add/remove members, mark attendance for members without Telegram
+- **Admins** — add events for both teams or one (Nav+U, Prayer Walk, VTP or custom) with date, time and location; edit each team's ministry groups; change the invite code; sync the Google Sheet
 - **Creator** — gets an alert whenever someone new registers
 
 The whole bot lives in a single message that updates as you tap buttons.

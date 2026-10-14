@@ -5,6 +5,15 @@ A fully button-based interactive Telegram bot. Only ONE persistent message exist
 
 ---
 
+## What's New in v4.1 — Teams
+
+- **Restorer (brothers) and Hesed (sisters)** share one bot — members pick their team when registering
+- Each team has its own **ministry groups** (admin edits them in **🧩 Groups**); Hesed starts with none
+- Events can be for **both teams** or **one team**
+- Leaders only see their own team; admins see both
+- **WhatsApp formats** per team: By group, Coming / Not coming, Simple list, or a Custom template
+- Google Sheet gets a **Team** column (H)
+
 ## What's New in v4 — Multiple Events
 
 - **Several events at once** — every open event shows on the home screen with your status
@@ -49,7 +58,7 @@ Chat stays clean — only 1 message forever
 
 > Exception: the creator also gets 🔔 new-member alerts; their menu is re-sent below each alert.
 
-**Typing:** Telegram can't hide the text box, so the bot keeps the chat clean itself — text is only read when the bot asks for it (invite code, name, password, event details) and is then removed. Anything else typed is deleted straight away and does nothing.
+**Typing:** Telegram can't hide the text box, so the bot keeps the chat clean itself — text is only read when the bot asks for it (invite code, name, password, event details) and is then removed. Anything else — text, photos, files, stickers, voice notes — is deleted straight away and does nothing.
 
 ---
 
@@ -60,8 +69,9 @@ Chat stays clean — only 1 message forever
 | Welcome | Strangers | First /start |
 | Register | Strangers | Tap "I have invite code" |
 | Home | All members | After registration / Back |
-| My Profile | Members | My Profile button |
-| Login | Members | Login button |
+| My Profile | Members | My Profile button (update name, change group) |
+| Change Group | Members | Inside My Profile |
+| Login | Members | My Profile → Leader/Admin Login |
 | View List | Leaders + Admin | View List button |
 | WhatsApp | Leaders + Admin | WhatsApp button |
 | Manage Members | Leaders + Admin | Manage Members button |
@@ -72,6 +82,10 @@ Chat stays clean — only 1 message forever
 | Event detail | Admin | Tap an event in Manage Events |
 | All Members | Admin | All Members button |
 | Sync Sheet | Admin | Sync Sheet button (action, no screen) |
+| Invite Code | Admin | Invite Code button |
+| Groups | Admin | Groups button → pick team |
+| Change Team | Members | Inside My Profile |
+| WhatsApp Format | Leaders + Admin | Inside WhatsApp |
 
 ---
 
@@ -83,7 +97,7 @@ Chat stays clean — only 1 message forever
 | `ADMIN_USER_ID` | ✅ | Your Telegram user ID |
 | `ADMIN_PASSWORD` | ✅ | Admin login password |
 | `LEADER_PASSWORD` | ✅ | Leader login password |
-| `INVITE_CODE` | ✅ | Member invite code |
+| `INVITE_CODE` | ✅ | Starting invite code — admins can change it in the bot (🔑 Invite Code) |
 | `ADMIN_NAME` | Optional | Admin display name |
 | `APPS_SCRIPT_URL` | Optional | Google Apps Script web app `/exec` URL |
 | `SHEET_SECRET` | With sheet | Shared password; must match Apps Script's Script Property |
@@ -103,7 +117,14 @@ Chat stays clean — only 1 message forever
 | `input_pending_{userId}` | String | Awaiting text input (5min TTL) |
 | `reg_pending_{userId}` | JSON | Temp registration data (10min TTL) |
 | `add_member_pending_{userId}` | String | Temp name for non-tele member (5min TTL) |
-| `events` | JSON | `[{ id, name, when, location, active }]` — all events |
+| `events` | JSON | `[{ id, name, when, location, team, active }]` — team = both/restorer/hesed |
+| `team_{userId}` | `"restorer"/"hesed"` | Team (missing = restorer) |
+| `groups_{team}` | JSON | That team's ministry groups (admin-editable) |
+| `wa_format_{team}` | String | `groups` / `split` / `simple` / `custom` |
+| `wa_template_{team}` | String | Custom WhatsApp template |
+| `wa_footer_{team}` | String | WhatsApp last line (replaces the old `wa_footer`) |
+| `invite_code` | String | Invite code set by an admin in the bot (overrides `INVITE_CODE`) |
+| `wa_footer` | String | WhatsApp summary last line (unset = ✝️🏃🏻‍♂️💨, empty = none) |
 | `new_event_pending_{userId}` | String/JSON | Event being added: name, then `{ name, when }` while asking location (5min TTL) |
 
 ---

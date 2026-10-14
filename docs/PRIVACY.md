@@ -13,9 +13,9 @@ To provide attendance services, this bot processes the following information:
 
 - **Telegram account information:** your User ID, display name (first and last name, if set) and username (if set)
 - **Registered name:** the name you provide when registering, which you can change later under My Profile
-- **Ministry group and role:** the group you choose, and whether you are a member, leader or admin
+- **Team, ministry group and role:** your team (Restorer or Hesed), the group you choose, and whether you are a member, leader or admin
 - **Attendance data:** your RSVP (Coming / Not Coming) for each event
-- **Member record:** your registered name, Telegram display name, username, ministry group, User ID and date joined are saved to the member sheet when you register
+- **Member record:** your registered name, Telegram display name, username, team, ministry group, User ID and date joined are saved to the member sheet when you register
 - **Members without Telegram:** leaders may add a member's name, ministry group and attendance on their behalf
 
 ### 2. How We Use Your Information
@@ -32,7 +32,7 @@ We do not use your personal data for marketing or share it with unrelated third 
 ### 3. Data Storage & Security
 
 - **Storage:** Attendance data is stored in Cloudflare KV, operated by Cloudflare Inc.
-- **Security:** All data is transmitted over secure, encrypted HTTPS connections. Your data is only accessible to bot administrators and leaders of SP Navigators. Leaders can see members' names, groups, User IDs and RSVPs.
+- **Security:** All data is transmitted over secure, encrypted HTTPS connections. Your data is only accessible to bot administrators and leaders of SP Navigators. Leaders can see the names, groups, User IDs and RSVPs of members in their own team; administrators can see both teams.
 - **Third-party services:** This bot uses Cloudflare Workers and Cloudflare KV for hosting and data storage. Member registration records are also stored in Google Sheets, operated by Google LLC, for record-keeping purposes. These services handle data only as instructed and are not authorised to use it for other purposes.
 
 ### 4. Data Retention & Deletion

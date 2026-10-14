@@ -6,7 +6,7 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "node test/bot.test.mjs"
+    "test": "node test/bot.test.mjs && node test/sheet.test.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.125.0"

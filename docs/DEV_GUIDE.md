@@ -21,7 +21,8 @@ spnav-bot/
 │   ├── Code.gs            ← Google Apps Script (paste into the sheet's script editor)
 │   └── README.md
 ├── test/
-│   └── bot.test.mjs       ← Simulated Telegram + KV tests (npm test)
+│   ├── bot.test.mjs       ← Simulated Telegram + KV tests (npm test)
+│   └── sheet.test.mjs     ← Code.gs against a fake Google Sheet (npm test)
 └── docs/
 ├── package.json           ← npm scripts
 └── docs/
@@ -127,7 +128,7 @@ src/index.js
         │   └── del_*         — delete non-telegram member
         └── message handler
             ├── Text input handler (invite_code, name, passwords etc.)
-            ├── Stray text (no input_pending) → deleted, nothing else happens
+            ├── Stray text / photos / files (no input_pending) → deleted, nothing else happens
             └── /start command
 ```
 
@@ -150,6 +151,9 @@ src/index.js
 | `newev_` | Pick preset (index into PRESET_EVENTS) | `newev_0` |
 | `evname_` / `evwhen_` / `evloc_` | Rename / change date & time / location | `evwhen_emgx2k1a` |
 | `evskiploc` | Skip location while adding | — |
+| `screen_my_group` / `mygrp_` | Member changes own group | `mygrp_notsure` |
+| `input_wa_footer` | Edit WhatsApp footer (leaders) | — |
+| `screen_invite_code` / `input_invite_code_set` | View / change invite code (admin) | — |
 | `evoff_` / `evon_` | Cancel / reopen | `evoff_emgx2k1a` |
 | `evclr_` / `evdel_` | Clear RSVPs / delete event | `evdel_emgx2k1a` |
 | `markev_` | Pick event to mark attendance | `markev_emgx2k1a` |
@@ -202,6 +206,10 @@ sa_c_ / sa_n_{eventId}_{memberId} → saves rsvp_{eventId}_{memberId}
 | `invite_code` | "I have invite code" button | Invite code check |
 | `name` | After valid invite code | Name input → group picker |
 | `update_name` | Profile → Update Name | Name update |
+| `wa_footer` | WhatsApp → Edit Footer | WhatsApp summary footer (`-` = none) |
+| `invite_code_set` | Invite Code → Change Code | New invite code (admin, no spaces) |
+| `wa_footer:{team}` / `wa_template:{team}` | WhatsApp → Edit Footer / Template | Per-team WhatsApp settings |
+| `group_add:{team}` | Groups → Add Group | New ministry group |
 | `password_leader` | Login as Leader button | Leader password |
 | `password_admin` | Login as Admin button | Admin password |
 | `new_event_name` | Add Event → Custom name | Event name, then asks date & time |
@@ -290,11 +298,11 @@ npx wrangler login      # Re-authenticate
 |---|---|
 | `{ name, telegram, username, group, userId }` | Insert row, or update B–E if the User ID (col F) exists |
 | `{ action: "delete", userId }` | Delete row, renumber S/N |
-| `{ action: "sync", members: [{ userId, name, group }] }` | Rewrite all rows; keeps C, D, G for existing IDs |
+| `{ action: "sync", members: [{ userId, name, group, team }] }` | Rewrite all rows; keeps Username, Display Name, Date Joined for existing IDs |
 
 Returns `{ success: true }` or `{ success: false, error }`. The Worker logs failures as `Apps Script rejected:`.
 
-Columns: A S/N · B Name · C Telegram Display Name · D Telegram Username · E Ministry Group · F User ID (text) · G Date Joined (date).
+Columns: A S/N · B Name · C Team · D Ministry Group · E Telegram Username · F Telegram Display Name · G Date Joined (date) · H User ID (text). Defined once in `HEADERS`/`COL` in Code.gs; `ensureLayout()` moves columns into that order by header name if the sheet differs.
 
 After editing Code.gs: Deploy → Manage deployments → Edit → **New version**.
 
@@ -322,3 +330,56 @@ npm test
 ```
 
 `test/bot.test.mjs` fakes KV (a `Map`) and `fetch`, posts webhook updates to the Worker's `fetch`, and checks the edited message text/buttons and KV contents — registration-free flows for events, RSVP, marking attendance, lists, removal and the upgrade migration. It also fails if any button's `callback_data` exceeds 64 bytes. Run it before every deploy.
+
+## Ministry Groups
+
+`GROUPS` at the top of `src/index.js` is the single list of groups (key + label) used by the registration picker, Change Group, Add Member and the WhatsApp summary order. Add or rename a group there. The stored value in `group_{userId}` is the label (e.g. `"Not sure"`).
+
+## Telegram Formatting (Markdown)
+
+Messages use Telegram's legacy `Markdown`, where `_ * ` [` are formatting. Any user-typed text (names, usernames, event names/dates/locations) must be escaped before it goes into a message:
+
+- `md(x)` — for text outside bold/italic
+- `mdb(x)` — for text inside `*bold*` (Telegram doesn't allow escapes inside an entity, so it closes and reopens the bold around the character)
+
+Button labels are never parsed, so don't escape them. WhatsApp blocks are inside ``` code blocks, so they aren't escaped either (only ``` is replaced).
+
+All sends/edits go through `telegramCall()`: if Telegram still replies "can't parse entities", it logs the error and resends the same text without formatting, so users always get the screen.
+
+## Teams
+
+- `TEAMS` (top of `src/index.js`) lists the teams: `restorer` (Restorer) and `hesed` (Hesed). `team_{userId}` stores the key; missing = `restorer` (everyone from before teams).
+- Groups are per team in `groups_{team}` (JSON array), falling back to `DEFAULT_GROUPS`. Group buttons use the **index** (`group_0`, `mygrp_2`, `add_member_group_ns` for Not sure) so names can be anything.
+- A team with no groups skips the group step and stores `group_ = "-"`.
+- Events have `team`: `"both"` (default/missing) or a team key. `eventVisibleTo(event, team)` decides what members see and can RSVP.
+- `scopeTeam(userId)` = `null` for admins (everything) or the leader's team; list, WhatsApp, mark attendance and remove member filter by it, and the `sa_`/`remove_member_` handlers re-check it.
+- Registration: name → `regteam_{team}` → `group_{i|ns}` (or straight to `finishRegistration` if no groups).
+
+### Team callbacks
+
+| Prefix | Purpose |
+|---|---|
+| `regteam_` | Pick team during registration |
+| `screen_my_team` / `myteam_` | Member changes team |
+| `screen_groups` / `grps_` / `grpadd_` / `grpdel_{team}_{i}` | Admin edits groups |
+| `newaud_` | Audience while adding an event |
+| `evaud_` / `evaudset_{id}_{team}` | Change an event's audience |
+| `amteam_` | Admin picks team for a non-Telegram member |
+| `wa_{team}` | WhatsApp for a team |
+| `wafmt_{team}` / `wafmtset_{team}_{fmt}` | Pick WhatsApp format |
+| `watpl_{team}` / `wafoot_{team}` | Edit custom template / footer |
+
+### WhatsApp
+
+`buildWhatsappText(event, team)` builds one block. Formats: `groups` (default), `split`, `simple`, `custom` (template with `{team} {event} {date} {location} {groups} {coming} {notcoming} {coming_count} {notcoming_count}`; lines that end up as just `-` are dropped). The old single `wa_footer` key is read as Restorer's footer until a team footer is saved.
+
+### Sheet
+
+`appendToSheet(member)` takes `{ name, telegram, username, group, team, userId }` and sends the team label; Code.gs writes it to column H.
+
+## Emojis
+
+- `TEAM_EMOJI` — 👨 Restorer, 👩 Hesed, 👥 both. Use `teamTag(team)` in bot screens; `teamLabel(team)` (no emoji) for the sheet and WhatsApp text.
+- `eventEmoji(event)` — `event.emoji` if an admin picked one, else `EVENT_EMOJI_RULES` by name (📖 Nav+U, 🙏 Prayer, 🏕️ VTP), else 📅. Choices for admins: `EVENT_EMOJI_CHOICES` (callbacks `evemo_{id}`, `evemoset_{id}_{i|auto}`).
+- `greeting()` — 🌅/☀️/🌙 by Singapore hour (UTC+8).
+- ⛔ = cancelled (so it isn't confused with ❌ not coming).

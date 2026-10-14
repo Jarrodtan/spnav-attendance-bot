@@ -139,6 +139,13 @@ _October 2026_ — based on leader feedback. `simple_index.js` kept as the archi
 - **🗓 Manage Events** (admin): add from presets (Weekly Nav+U, Prayer Walk, VTP) or custom name; per-event rename, date & time, cancel/reopen, clear RSVPs, delete
 - Date & time entered in one message
 - Random text typed when the bot isn't asking for anything is deleted automatically (chat stays at one message)
+- Photos, files, stickers and voice notes are deleted too
+- **🔑 Invite Code** (admin): view and change the invite code in the bot; the `INVITE_CODE` secret is just the starting value
+- 👉 marks the RSVP option a member already picked
+- Leader/Admin Login moved from the home screen into My Profile
+- Fixed: names/usernames/event text containing `_` or `*` could stop messages sending (e.g. the new-member alert for `@wei_liang`) — text is now escaped, with a plain-text fallback
+- Members can change their own ministry group in My Profile; **Not sure** option added (sheet updates automatically)
+- WhatsApp summary uses the leaders' format: coming only, grouped by ministry group in fixed order, A–Z, blank number per group for others to add themselves; shown in copyable blocks; editable footer
 - Optional **📍 Location** per event — asked when adding (with Skip), editable from the event screen, shown on home, list and WhatsApp
 - View List, WhatsApp summary and Mark Attendance work per event
 
@@ -155,3 +162,32 @@ _October 2026_ — based on leader feedback. `simple_index.js` kept as the archi
 ### Migration
 - First run turns the old event into the first event; old RSVPs and `event_*` keys are cleared
 
+---
+
+## v4.1 — Teams (Restorer & Hesed)
+_October 2026_
+
+### New
+- **Teams:** Restorer (brothers) and Hesed (sisters) share one bot; members pick their team when registering and can change it in My Profile
+- **🧩 Groups** (admin): each team has its own ministry group list; Hesed starts with none (no group step), add Group 1, 2… any time
+- Events can be for **both teams** or **one team** (chosen when adding, editable with 👥 Who's it for)
+- Leaders only see and manage their own team; admins see both (lists split by team, WhatsApp asks which team)
+- **WhatsApp formats** per team: By group, Coming / Not coming, Simple list, or a **Custom template** with placeholders; per-team footer; team name in the header
+- Members list shows team and group
+- Google Sheet column **H: Team**; Code.gs adds the header automatically
+- **🔑 Invite Code** (admin): view and change the invite code in the bot
+- 👉 marks the RSVP option already picked; Leader/Admin Login moved into My Profile
+- Photos/files/stickers deleted; members can change their own group (with a "Not sure" option)
+- **Emojis:** time-of-day greeting (🌅 ☀️ 🌙), event-type emojis (📖 Nav+U, 🙏 Prayer Walk, 🏕️ VTP, 📅 others — admins can change per event), team emojis (👨 Restorer, 👩 Hesed, 👥 both), 🎉 on registering, 🙌 / 😢 on RSVP, ⛔ for cancelled; event emoji in the WhatsApp header and `{emoji}` placeholder
+- **Google Sheet column order:** S/N · Name · Team · Ministry Group · Telegram Username · Telegram Display Name · Date Joined · User ID. Code.gs rearranges an existing sheet automatically by header name.
+- `test/sheet.test.mjs` tests Code.gs against a fake sheet
+
+### Fixed
+- Names/usernames/event text with `_` or `*` could stop messages sending — now escaped, with a plain-text fallback
+- Trailing blank number (`2. `) in WhatsApp lists kept its space
+
+### Upgrade notes
+- Existing members become **Restorer**; existing events are for **both teams**
+- (Optional) back up the sheet: **File → Make a copy**
+- Paste the new `apps-script/Code.gs` and deploy a **New version**, then tap **📊 Sync Sheet** — this rearranges the columns and fills in Team for existing rows
+- Tell leaders: Leader/Admin Login is now in **👤 My Profile**

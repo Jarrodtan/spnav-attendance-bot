@@ -4,9 +4,15 @@
 
 ## Sheet columns
 
-| A | B | C | D | E | F | G |
-|---|---|---|---|---|---|---|
-| S/N | Name (Registered with bot) | Telegram Display Name | Telegram Username | Ministry Group | User ID | Date Joined |
+| A | B | C | D | E | F | G | H |
+|---|---|---|---|---|---|---|---|
+| S/N | Name (Registered with bot) | Team | Ministry Group | Telegram Username | Telegram Display Name | Date Joined | User ID |
+
+Most-used columns first (who, which team, which group, how to contact), technical ones last.
+
+**The script arranges the columns itself.** If row 1 doesn't match this order (e.g. an older layout), the first request moves every column into place by matching the header names — no data is lost. Existing rows get their Team filled in by **📊 Sync Sheet**. Make a copy of the sheet first if you want a backup (**File → Make a copy**).
+
+The headers must keep these exact names, or the script will treat them as new columns.
 
 ## Setup
 
