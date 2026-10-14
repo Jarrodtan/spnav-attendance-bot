@@ -3,7 +3,7 @@
 
 _Last Updated: 14 October 2026_
 
-> The official copy is the Google Doc. Keep this file in sync when either changes.
+> The official copy is the [Google Doc](https://docs.google.com/document/d/1U9jEWdjq6uRmOsJXeEMq3yOvzKFzTLIj_GRaTU33orM/edit). Keep this file in sync when either changes.
 
 ---
 
@@ -25,7 +25,7 @@ Your information is used solely to:
 - Register you as a participant in SP Navigators
 - Record and report your attendance for SP Navigators events
 - Assign you to your ministry group for reporting purposes
-- Notify the bot administrator when a new member registers (name, display name, username, group and User ID)
+- Notify the bot administrator when a new member registers (name, display name, username, team, group and User ID)
 
 We do not use your personal data for marketing or share it with unrelated third parties.
 
