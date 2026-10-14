@@ -123,7 +123,7 @@ Tap after anything changed outside the bot (e.g. KV keys deleted in the Cloudfla
 > ⚠️ Deleting keys directly in Cloudflare KV does **not** update the sheet. Remove people through the bot, or tap Sync Sheet afterwards.
 
 ### Sheet setup (one-time)
-- Apps Script code is `Code.gs` in this repo — paste it into the sheet's Apps Script editor
+- Apps Script code is `apps-script/Code.gs` in this repo — paste it into the sheet's Apps Script editor
 - `SHEET_NAME` at the top must match the tab name (currently `Database`)
 - Script Properties → `SHEET_SECRET` must equal the Worker's `SHEET_SECRET`
 - Deploy as Web app: **Execute as: Me**, **Who has access: Anyone** (the secret blocks outsiders)

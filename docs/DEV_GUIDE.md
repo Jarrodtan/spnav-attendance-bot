@@ -7,22 +7,29 @@
 
 ```
 spnav-bot/
-├── src/multi_index.js     ← Multi-event button-based bot (current — deployed)
-├── src/simple_index.js    ← Single-event version (archived, for rollback)
-├── src/index.js           ← Command-based bot (backup, NOT deployed)
-├── src/archive_index.js   ← Old complex multi-event version
-├── Code.gs                ← Google Apps Script (paste into the sheet's script editor)
+├── README.md              ← Start here
+├── CHANGELOG.md
 ├── wrangler.jsonc         ← Cloudflare config ("main" decides which file runs)
+├── package.json           ← npm scripts (deploy, dev, test)
+├── src/
+│   ├── index.js           ← The bot (deployed)
+│   └── archive/           ← Old versions, kept for rollback/reference (not deployed)
+│       ├── simple_index.js    ← v3 single-event
+│       ├── command_index.js   ← v2 slash-command version
+│       └── archive_index.js   ← v1 complex multi-event
+├── apps-script/
+│   ├── Code.gs            ← Google Apps Script (paste into the sheet's script editor)
+│   └── README.md
+├── test/
+│   └── bot.test.mjs       ← Simulated Telegram + KV tests (npm test)
+└── docs/
 ├── package.json           ← npm scripts
 └── docs/
-    ├── SIMPLE_README.md
-    ├── DEV_GUIDE.md       ← This file
-    ├── USER_GUIDE.md
-    ├── LEADER_GUIDE.md
+    ├── BOT_OVERVIEW.md    ← Screens, env vars, KV keys
     ├── ADMIN_GUIDE.md
-    ├── SETUP.md
-    ├── DEPLOY.md
-    └── TROUBLESHOOT.md
+    ├── LEADER_GUIDE.md
+    ├── PRIVACY.md         ← Privacy policy (mirror of the Google Doc)
+    └── DEV_GUIDE.md       ← This file
 ```
 
 ---
@@ -34,11 +41,11 @@ Telegram User
       ↓ message / button tap
 Telegram API
       ↓ POST to webhook URL
-Cloudflare Worker (multi_index.js)
+Cloudflare Worker (src/index.js)
       ↓ reads/writes
 Cloudflare KV (ATTENDANCE_KV)
       ↓ on registration
-Google Apps Script (Code.gs) → Google Sheets (awaited, authenticated with SHEET_SECRET)
+Google Apps Script (apps-script/Code.gs) → Google Sheets (awaited, authenticated with SHEET_SECRET)
 ```
 
 ---
@@ -46,7 +53,7 @@ Google Apps Script (Code.gs) → Google Sheets (awaited, authenticated with SHEE
 ## Code Structure
 
 ```
-multi_index.js
+src/index.js
 ├── DATE HELPER
 │   └── getThisFriday()
 │
@@ -301,12 +308,16 @@ After editing Code.gs: Deploy → Manage deployments → Edit → **New version*
 - `location` is optional free text; `eventLine()` adds a `📍` line only when it's set.
 - `when` is free text (no parsing) — events are never auto-expired; admins delete them.
 - `getEvents()` migrates the old single-event keys on first run (`event_*` → first event, old `rsvp_{userId}` deleted).
-- Add presets by editing `PRESET_EVENTS` at the top of `multi_index.js`.
+- Add presets by editing `PRESET_EVENTS` at the top of `src/index.js`.
 
 ## Rolling Back
 
-Set `"main": "src/simple_index.js"` in `wrangler.jsonc` and deploy. Note the old version reads `event_*` / `rsvp_{userId}` keys, which the new version deleted — the admin would need to set the event again.
+Set `"main": "src/archive/simple_index.js"` in `wrangler.jsonc` and deploy. Note the old version reads `event_*` / `rsvp_{userId}` keys, which the new version deleted — the admin would need to set the event again.
 
 ## Testing Without Telegram
 
-The flows were checked with a small Node harness that fakes KV (`Map`) and `fetch`, posts webhook updates to `default.fetch`, and asserts on the edited message text/buttons and KV contents. Worth recreating as `test/` if the bot keeps growing.
+```bash
+npm test
+```
+
+`test/bot.test.mjs` fakes KV (a `Map`) and `fetch`, posts webhook updates to the Worker's `fetch`, and checks the edited message text/buttons and KV contents — registration-free flows for events, RSVP, marking attendance, lists, removal and the upgrade migration. It also fails if any button's `callback_data` exceeds 64 bytes. Run it before every deploy.

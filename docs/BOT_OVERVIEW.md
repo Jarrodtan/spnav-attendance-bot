@@ -1,11 +1,11 @@
 # SP Navigators Attendance Bot — Interactive Version
-### multi_index.js v3 (previous single-event version: simple_index.js, archived)
+### src/index.js — v4 multi-event (older versions in `src/archive/`)
 
 A fully button-based interactive Telegram bot. Only ONE persistent message exists in chat — all navigation happens by editing that single message.
 
 ---
 
-## What's New in v3 — Multiple Events
+## What's New in v4 — Multiple Events
 
 - **Several events at once** — every open event shows on the home screen with your status
 - **One-tap RSVP** — ✅ / ❌ buttons per event on the home screen; no RSVP or My Status screens
@@ -110,8 +110,8 @@ Chat stays clean — only 1 message forever
 
 Edit `wrangler.jsonc`:
 ```jsonc
-"main": "src/multi_index.js",    // multi-event version (current)
-"main": "src/simple_index.js",   // single-event version (archived)
-"main": "src/index.js",          // command version
+"main": "src/index.js",                    // multi-event version (current)
+"main": "src/archive/simple_index.js",     // single-event version
+"main": "src/archive/command_index.js",    // command version
 ```
 Then `npx wrangler deploy`.
