@@ -140,7 +140,8 @@ multi_index.js
 | `screen_events` / `screen_add_event` | Event list / add event | — |
 | `ev_` | Open event detail | `ev_emgx2k1a` |
 | `newev_` | Pick preset (index into PRESET_EVENTS) | `newev_0` |
-| `evname_` / `evwhen_` | Rename / change date & time | `evwhen_emgx2k1a` |
+| `evname_` / `evwhen_` / `evloc_` | Rename / change date & time / location | `evwhen_emgx2k1a` |
+| `evskiploc` | Skip location while adding | — |
 | `evoff_` / `evon_` | Cancel / reopen | `evoff_emgx2k1a` |
 | `evclr_` / `evdel_` | Clear RSVPs / delete event | `evdel_emgx2k1a` |
 | `markev_` | Pick event to mark attendance | `markev_emgx2k1a` |
@@ -196,7 +197,9 @@ sa_c_ / sa_n_{eventId}_{memberId} → saves rsvp_{eventId}_{memberId}
 | `password_leader` | Login as Leader button | Leader password |
 | `password_admin` | Login as Admin button | Admin password |
 | `new_event_name` | Add Event → Custom name | Event name, then asks date & time |
-| `new_event_when` | After preset/custom name | Creates the event |
+| `new_event_when` | After preset/custom name | Saves `{ name, when }`, asks location |
+| `new_event_location` | After date & time | Creates the event (or `evskiploc` button skips) |
+| `event_location:{id}` | Event → Location | Change location (`-` clears) |
 | `event_name:{id}` | Event → Rename | Rename event |
 | `event_when:{id}` | Event → Date & Time | Change date & time |
 | `add_member_name` | Manage Members → Add | Non-telegram member name |
@@ -225,8 +228,8 @@ UI state:
   add_member_pending_{userId}      → "James Wong" (5min TTL)
 
 Events:
-  events                           → [{ "id": "emgx2k1a", "name": "Weekly Nav+U", "when": "Fri 17 Oct, 5:30pm", "active": true }]
-  new_event_pending_{userId}       → "Prayer Walk" (5min TTL)
+  events                           → [{ "id": "emgx2k1a4f9", "name": "Weekly Nav+U", "when": "Fri 17 Oct, 5:30pm", "location": "SP Chapel", "active": true }]
+  new_event_pending_{userId}       → "Prayer Walk", then {"name","when"} while asking location (5min TTL)
 ```
 
 ---
@@ -294,7 +297,8 @@ After editing Code.gs: Deploy → Manage deployments → Edit → **New version*
 ## Events Model
 
 - `events` is one JSON array in KV, order = order added. Admin-only writes, so no locking needed.
-- Event ids are `"e" + Date.now().toString(36)` — short so `mm_{id}_{memberId}` fits in 64 bytes.
+- Event ids are `"e" + Date.now().toString(36)` + 3 random chars — short so `mm_{id}_{memberId}` fits in 64 bytes, and unique even if two are created in the same millisecond.
+- `location` is optional free text; `eventLine()` adds a `📍` line only when it's set.
 - `when` is free text (no parsing) — events are never auto-expired; admins delete them.
 - `getEvents()` migrates the old single-event keys on first run (`event_*` → first event, old `rsvp_{userId}` deleted).
 - Add presets by editing `PRESET_EVENTS` at the top of `multi_index.js`.

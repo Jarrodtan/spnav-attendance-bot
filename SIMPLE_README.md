@@ -11,6 +11,7 @@ A fully button-based interactive Telegram bot. Only ONE persistent message exist
 - **One-tap RSVP** — ✅ / ❌ buttons per event on the home screen; no RSVP or My Status screens
 - **🗓 Manage Events** (admin) — add from presets (Weekly Nav+U, Prayer Walk, VTP) or a custom name; rename, change date & time, cancel/reopen, clear RSVPs, delete — per event
 - **Date & time in one input**, e.g. `Fri 17 Oct, 5:30pm`
+- **📍 Location** per event (optional — Skip when adding, edit or clear later)
 - **Removed:** Week Mode, Auto Date, global Clear RSVPs, "deleted immediately" wording
 - View List / WhatsApp / Mark Attendance work per event
 - Upgrading: on first run the old single event becomes the first event; old RSVPs are cleared
@@ -100,8 +101,8 @@ Chat stays clean — only 1 message forever
 | `input_pending_{userId}` | String | Awaiting text input (5min TTL) |
 | `reg_pending_{userId}` | JSON | Temp registration data (10min TTL) |
 | `add_member_pending_{userId}` | String | Temp name for non-tele member (5min TTL) |
-| `events` | JSON | `[{ id, name, when, active }]` — all events |
-| `new_event_pending_{userId}` | String | Event name while admin types date & time (5min TTL) |
+| `events` | JSON | `[{ id, name, when, location, active }]` — all events |
+| `new_event_pending_{userId}` | String/JSON | Event being added: name, then `{ name, when }` while asking location (5min TTL) |
 
 ---
 

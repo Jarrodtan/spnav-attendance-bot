@@ -21,6 +21,7 @@
 ✅ You're COMING
 
 📅 Prayer Walk — Sat 18 Oct, 9am
+📍 SP Chapel
 ❓ Not RSVP'd yet
 
 Tap ✅ coming or ❌ not coming:
@@ -51,6 +52,7 @@ Tap **📋 View List** — one section per event:
 • Ben Ng (987654321)
 
 📅 Prayer Walk — Sat 18 Oct, 9am
+📍 SP Chapel
 ✅ Coming (1):
 • Mary Lim (123456789)
 ❌ Not Coming (0):
@@ -81,6 +83,7 @@ Tap **📱 WhatsApp** → copy and paste to the group. Covers all open events (c
 
 📅 Prayer Walk
 🗓 Sat 18 Oct, 9am
+📍 SP Chapel
 ...
 ```
 

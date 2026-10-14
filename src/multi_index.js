@@ -31,9 +31,9 @@
 //   main_msg_{userId}         — The persistent message ID to edit
 //   input_pending_{userId}    — What text input we're waiting for
 //   reg_pending_{userId}      — Temporary registration data while waiting for group selection (JSON)
-//   events                    — JSON array of events: [{ id, name, when, active }]
+//   events                    — JSON array of events: [{ id, name, when, location, active }]
 //   rsvp_{eventId}_{userId}   — RSVP status for one event ("coming", "notcoming")
-//   new_event_pending_{userId}— Event name chosen while admin types date & time
+//   new_event_pending_{userId}— Event being added: name, then JSON { name, when } while asking location
 // ============================================
 
 
@@ -225,11 +225,24 @@ async function getEvent(eventId, env) {
 
 // Short id so callback_data stays under Telegram's 64-byte limit
 function newEventId() {
-    return "e" + Date.now().toString(36);
+    return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 }
 
 function eventLine(event) {
-    return `*${event.name}*${event.when ? ` — ${event.when}` : ""}`;
+    return `*${event.name}*${event.when ? ` — ${event.when}` : ""}${event.location ? `\n📍 ${event.location}` : ""}`;
+}
+
+// Create the event the admin has been typing (name + date & time saved in new_event_pending)
+async function createPendingEvent(userId, location, env) {
+    const raw = await env.ATTENDANCE_KV.get(`new_event_pending_${userId}`);
+    await env.ATTENDANCE_KV.delete(`new_event_pending_${userId}`);
+    if (!raw || !raw.startsWith("{")) return `❌ Expired. Please add the event again.`;
+    const { name, when } = JSON.parse(raw);
+    const events = await getEvents(env);
+    const event = { id: newEventId(), name, when, location, active: true };
+    events.push(event);
+    await saveEvents(events, env);
+    return `✅ Added ${eventLine(event)}`;
 }
 
 // Short label for buttons
@@ -492,7 +505,7 @@ async function buildWhatsappScreen(env) {
 
     for (const event of events) {
         const { coming, notcoming } = await getEventAttendance(event.id, env, false);
-        msg += `\n📅 *${event.name}*\n🗓 ${event.when || "-"}\n\n`;
+        msg += `\n📅 *${event.name}*\n🗓 ${event.when || "-"}\n${event.location ? `📍 ${event.location}\n` : ""}\n`;
         msg += `✅ *COMING (${coming.length})*\n`;
         coming.forEach((n, i) => msg += `${i + 1}. ${n}\n`);
         if (coming.length === 0) msg += `None\n`;
@@ -606,6 +619,7 @@ async function buildEventDetailScreen(eventId, env) {
                     { text: "✏️ Rename", callback_data: `evname_${eventId}` },
                     { text: "🕐 Date & Time", callback_data: `evwhen_${eventId}` }
                 ],
+                [{ text: "📍 Location", callback_data: `evloc_${eventId}` }],
                 [event.active
                     ? { text: "❌ Cancel Event", callback_data: `evoff_${eventId}` }
                     : { text: "✅ Reopen Event", callback_data: `evon_${eventId}` }],
@@ -915,6 +929,23 @@ async function handleUpdate(update, env) {
             if (!(await isAdmin(userId, env))) return;
             await promptInput(userId, chatId, messageId, `event_name:${data.slice(7)}`,
                 `✏️ *Rename Event*\n\nType the new name:`,
+                env
+            );
+            return;
+
+        } else if (data === "evskiploc") {
+            // Admin skipped location while adding an event — create it without one
+            if (!(await isAdmin(userId, env))) return;
+            await env.ATTENDANCE_KV.delete(`input_pending_${userId}`);
+            const note = await createPendingEvent(userId, "", env);
+            const screen = await buildEventsScreen(env);
+            await editMessageWithKeyboard(chatId, messageId, note + `\n\n` + screen.text, screen.keyboard, env.BOT_TOKEN);
+            return;
+
+        } else if (data.startsWith("evloc_")) {
+            if (!(await isAdmin(userId, env))) return;
+            await promptInput(userId, chatId, messageId, `event_location:${data.slice(6)}`,
+                `📍 *Location*\n\nType the location:\n\nExample: \`SP Chapel\`\n\n_Type_ \`-\` _to remove it._`,
                 env
             );
             return;
@@ -1376,26 +1407,39 @@ async function handleUpdate(update, env) {
                 );
 
             } else if (inputPending === "new_event_when") {
-                // Admin typed date & time — create the event
+                // Admin typed date & time — now ask for location (or skip)
                 const name = await env.ATTENDANCE_KV.get(`new_event_pending_${userId}`);
-                await env.ATTENDANCE_KV.delete(`new_event_pending_${userId}`);
-                let note = `❌ Expired. Please add the event again.`;
-                if (name) {
-                    const events = await getEvents(env);
-                    events.push({ id: newEventId(), name, when: text, active: true });
-                    await saveEvents(events, env);
-                    note = `✅ *${name}* added — ${text}`;
+                if (!name) {
+                    const screen = await buildEventsScreen(env);
+                    await editMessageWithKeyboard(chatId, mainMsgId, `❌ Expired. Please add the event again.\n\n` + screen.text, screen.keyboard, env.BOT_TOKEN);
+                    return;
                 }
+                await env.ATTENDANCE_KV.put(`new_event_pending_${userId}`, JSON.stringify({ name, when: text }), { expirationTtl: 300 });
+                await env.ATTENDANCE_KV.put(`input_pending_${userId}`, "new_event_location", { expirationTtl: 300 });
+                await editMessageWithKeyboard(chatId, mainMsgId,
+                    `📍 *${name}* — ${text}\n\nType the location:\n\nExample: \`SP Chapel\``,
+                    { inline_keyboard: [
+                        [{ text: "⏭ Skip", callback_data: "evskiploc" }],
+                        [{ text: "❌ Cancel", callback_data: "screen_events" }]
+                    ]},
+                    env.BOT_TOKEN
+                );
+
+            } else if (inputPending === "new_event_location") {
+                // Admin typed location — create the event
+                const note = await createPendingEvent(userId, text, env);
                 const screen = await buildEventsScreen(env);
                 await editMessageWithKeyboard(chatId, mainMsgId, note + `\n\n` + screen.text, screen.keyboard, env.BOT_TOKEN);
 
-            } else if (inputPending.startsWith("event_name:") || inputPending.startsWith("event_when:")) {
-                // Admin renamed an event or changed its date & time
+            } else if (inputPending.startsWith("event_name:") || inputPending.startsWith("event_when:") || inputPending.startsWith("event_location:")) {
+                // Admin renamed an event, or changed its date & time / location
                 const [field, eventId] = inputPending.split(":");
                 const events = await getEvents(env);
                 const event = events.find(e => e.id === eventId);
                 if (event) {
-                    if (field === "event_name") event.name = text; else event.when = text;
+                    if (field === "event_name") event.name = text;
+                    else if (field === "event_when") event.when = text;
+                    else event.location = text.trim() === "-" ? "" : text; // "-" clears it
                     await saveEvents(events, env);
                 }
                 const screen = await buildEventDetailScreen(eventId, env);

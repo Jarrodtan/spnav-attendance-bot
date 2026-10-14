@@ -23,6 +23,7 @@
 ✅ You're COMING
 
 📅 Prayer Walk — Sat 18 Oct, 9am
+📍 SP Chapel
 ❓ Not RSVP'd yet
 
 Tap ✅ coming or ❌ not coming:
@@ -49,18 +50,21 @@ Tap **🗓 Manage Events** to see all events. Several can be open at the same ti
 1. Tap **➕ Add Event**
 2. Pick a regular event — **Weekly Nav+U**, **Prayer Walk**, **VTP** — or **✏️ Custom name** and type one
 3. Type the date & time in one message, e.g. `Fri 17 Oct, 5:30pm`
-4. Done — it appears on everyone's home screen straight away
+4. Type the location, e.g. `SP Chapel` — or tap **⏭ Skip**
+5. Done — it appears on everyone's home screen straight away
 
 ### Edit an event
 Tap the event in the list:
 
 ```
 🗓 Weekly Nav+U — Fri 17 Oct, 5:30pm
+📍 SP Chapel
 
 Status: ✅ Open for RSVP
 RSVPs: ✅ 12  ❌ 3
 
 [✏️ Rename]        [🕐 Date & Time]
+[📍 Location]
 [❌ Cancel Event]
 [🧹 Clear RSVPs]   [🗑️ Delete Event]
 [🔙 Back]
@@ -70,6 +74,7 @@ RSVPs: ✅ 12  ❌ 3
 |---|---|
 | ✏️ Rename | Type a new name |
 | 🕐 Date & Time | Type the new date & time in one message |
+| 📍 Location | Type the location (type `-` to remove it) |
 | ❌ Cancel Event | Members see "Cancelled", RSVP buttons disappear (becomes ✅ Reopen Event) |
 | 🧹 Clear RSVPs | Reset RSVPs for this event only — reuse it for next week |
 | 🗑️ Delete Event | Remove the event and its RSVPs |
