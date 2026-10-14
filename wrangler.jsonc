@@ -1,6 +1,6 @@
 {
   "name": "spnav-bot",
-  "main": "src/simple_index.js",
+  "main": "src/multi_index.js",
   "workers_dev": true,
   "preview_urls": true,
   "compatibility_date": "2026-06-18",

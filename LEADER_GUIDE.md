@@ -7,7 +7,7 @@
 
 1. Tap **🔐 Leader/Admin Login**
 2. Tap **🔐 Login as Leader**
-3. Type the leader password — deleted immediately for security
+3. Type the leader password
 4. Home screen reloads with leader buttons
 
 ---
@@ -17,9 +17,16 @@
 ```
 🙏 Welcome, Sarah!
 
-📅 Weekly Nav+U on 5 Sep 2026 (Fri) at 5:30pm
+📅 Weekly Nav+U — Fri 17 Oct, 5:30pm
+✅ You're COMING
 
-[📋 RSVP]          [📊 My Status]
+📅 Prayer Walk — Sat 18 Oct, 9am
+❓ Not RSVP'd yet
+
+Tap ✅ coming or ❌ not coming:
+
+[✅ Weekly Nav+U]   [❌ Weekly Nav+U]
+[✅ Prayer Walk]    [❌ Prayer Walk]
 [👤 My Profile]
 [📋 View List]      [📱 WhatsApp]
 [👥 Manage Members]
@@ -30,35 +37,39 @@
 
 ## View Attendance List
 
-Tap **📋 View List**:
+Tap **📋 View List** — one section per event:
 
 ```
 📋 Attendance List
 
-📅 Weekly Nav+U on 5 Sep 2026 (Fri) at 5:30pm
-
+📅 Weekly Nav+U — Fri 17 Oct, 5:30pm
 ✅ Coming (3):
 • John Tan (709711203)
 • Mary Lim (123456789)
-• James Wong ✏️
-
+• James Wong
 ❌ Not Coming (1):
 • Ben Ng (987654321)
 
-✏️ = non-Telegram member
+📅 Prayer Walk — Sat 18 Oct, 9am
+✅ Coming (1):
+• Mary Lim (123456789)
+❌ Not Coming (0):
+• None
 ```
+
+Members without Telegram show without an ID.
 
 ---
 
 ## WhatsApp Summary
 
-Tap **📱 WhatsApp** → copy and paste to group:
+Tap **📱 WhatsApp** → copy and paste to the group. Covers all open events (cancelled ones are left out):
 
 ```
 《SP NAVIGATORS ATTENDANCE》
 
 📅 Weekly Nav+U
-🗓 5 Sep 2026 (Fri)  🕐 5:30pm
+🗓 Fri 17 Oct, 5:30pm
 
 ✅ COMING (3)
 1. John Tan
@@ -67,13 +78,17 @@ Tap **📱 WhatsApp** → copy and paste to group:
 
 ❌ NOT COMING (1)
 1. Ben Ng
+
+📅 Prayer Walk
+🗓 Sat 18 Oct, 9am
+...
 ```
 
 ---
 
 ## Manage Members (Non-Telegram)
 
-Tap **👥 Manage Members** for members without Telegram:
+Tap **👥 Manage Members** to add/remove members and mark attendance for members without Telegram:
 
 ```
 👥 Manage Members
@@ -86,20 +101,23 @@ Tap **👥 Manage Members** for members without Telegram:
 
 ### Add a Member
 1. Tap **➕ Add Member**
-2. Type their full name — deleted immediately
+2. Type their full name
 3. Select their ministry group
-4. Done — they appear in the attendance list
+4. Done — they appear in the attendance list and the Google Sheet
 
 ### Mark Their Attendance
 1. Tap **📋 Mark Attendance**
-2. Tap the member's name
-3. Tap **✅ Coming** or **❌ Not Coming**
-4. Updates immediately
+2. Pick the event (skipped if there's only one)
+3. Tap the member's name
+4. Tap **✅ Coming** or **❌ Not Coming**
+5. Updates immediately
 
 ### Remove a Member
 1. Tap **🗑️ Remove Member**
-2. Tap the member's name
-3. They are removed from the list
+2. Tap the member's name — the list shows everyone (non-Telegram members are marked "(no Telegram)")
+3. They are removed from the bot **and** their Google Sheet row is deleted
+
+> ⚠️ This can't be undone. A removed Telegram member has to register again with the invite code to come back.
 
 ---
 

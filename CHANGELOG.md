@@ -106,3 +106,50 @@ _August 2026_
 ### Fixed
 - Missing `input_invite_code` callback handler added
 - `add_member_pending` KV key now has 5min TTL expiry
+
+---
+
+## v3.2 — Google Sheet Sync + Security Fixes
+_October 2026_
+
+### New
+- **📊 Sync Sheet** admin button — rebuilds the Google Sheet from the bot's data
+- **Remove Member** now lists all members (Telegram + non-Telegram) and deletes their sheet row (S/N renumbered)
+- Non-Telegram members added by leaders are written to the sheet
+- `Code.gs` added to the repo — Apps Script with insert / update / delete / sync, `SHEET_SECRET` auth, LockService, real dates
+
+### Changed
+- New-member alert to the creator is back (reverses v3.1); the creator's main menu is re-sent below each alert so it stays the latest message
+- Sheet writes are now awaited (previously fire-and-forget, so they were often cancelled)
+
+### Fixed
+- Creator picking a group saved the name as "Member" instead of the typed name
+- `/setup` route publicly exposed `BOT_TOKEN` — removed (token rotated)
+- An error in one update made Telegram retry it forever — now caught and logged
+- `notifyAdmin()` was not awaited — alerts could be dropped
+
+---
+
+## v4.0 — Multiple Events (multi_index.js)
+_October 2026_ — based on leader feedback. `simple_index.js` kept as the archived single-event version.
+
+### New
+- Several events open at once, all listed on the home screen with the member's status
+- One-tap ✅ / ❌ RSVP per event from the home screen
+- **🗓 Manage Events** (admin): add from presets (Weekly Nav+U, Prayer Walk, VTP) or custom name; per-event rename, date & time, cancel/reopen, clear RSVPs, delete
+- Date & time entered in one message
+- View List, WhatsApp summary and Mark Attendance work per event
+
+### Removed
+- Week Mode (replaced by just adding the events you need)
+- Auto Date (This Friday)
+- Separate RSVP / My Status screens (status is on the home screen)
+- Global Clear RSVPs (now per event)
+- "Deleted immediately" wording in prompts and guides
+
+### Fixed
+- Creating a "new event" only overwrote the single existing event
+
+### Migration
+- First run turns the old event into the first event; old RSVPs and `event_*` keys are cleared
+
