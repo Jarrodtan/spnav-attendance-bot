@@ -4,6 +4,8 @@ Telegram bot ([@spnav_bot](https://t.me/spnav_bot)) for SP Navigators members to
 
 Runs on **Cloudflare Workers** + **Workers KV**. Google Sheet updates go through a small **Google Apps Script**.
 
+> 🚧 **Status:** v3 in active use by SP Navigators, with ongoing improvements from leader feedback. Live: one-message button UI, RSVP, multi-event support, Google Sheet sync. See the [CHANGELOG](CHANGELOG.md).
+
 ## What it does
 
 - **Members** — register with an invite code, pick their team (**Restorer** brothers / **Hesed** sisters), then RSVP ✅/❌ to every upcoming event from one message
